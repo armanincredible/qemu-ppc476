@@ -50,8 +50,9 @@
     (CONTROL_EDCL_AVAIL | EDCL_BUFFER_SZ_2K | CONTROL_MULTICAST_AVAIL | CONTROL_SPEED)
 
 #define CONTROL_MASK \
-    (CONTROL_MULTICAST_EN | CONTROL_SPEED | CONTROL_PROMISCUOUS | CONTROL_FULL_DUPLEX | \
-    CONTROL_RECV_IRQ_EN | CONTROL_SEND_IRQ_EN | CONTROL_RECV_EN | CONTROL_SEND_EN)
+    (CONTROL_EDCL_DISABLE | CONTROL_MULTICAST_EN | CONTROL_SPEED | CONTROL_PROMISCUOUS | \
+     CONTROL_FULL_DUPLEX | CONTROL_RECV_IRQ_EN | CONTROL_SEND_IRQ_EN | CONTROL_RECV_EN | \
+     CONTROL_SEND_EN)
 
 #define STATUS_INVALID_ADDR     0x80
 #define STATUS_TOO_SMALL        0x40
@@ -720,7 +721,8 @@ static void greth_write(void *opaque, hwaddr offset, uint64_t val, unsigned size
             break;
         }
 
-        s->ctrl = val & CONTROL_MASK;
+        s->ctrl &= ~CONTROL_MASK;
+        s->ctrl |= val & CONTROL_MASK;
 
         if (val & CONTROL_SEND_EN) {
             greth_send_all(s);
